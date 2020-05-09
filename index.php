@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<?php 
+session_start();
+
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+
+var_dump($_SESSION);
+include_once('clases/conexion.php');
+?>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8">
+		<title>&#127937; &nbsp; &#128014;</title>
+		<link rel="stylesheet" href="css/bootstrap.min.css" media="all">
+	</head>
+	<body>
+		
+	<div class="container-fluid py-1 px-1">
+		<div class="row align-middle bg-secondary">
+			<div class="col-11 bg-secondary text-center">
+				<p class="h1">&#127937; &nbsp; &#128014; &nbsp; &#128014; &nbsp; &#128014;</p>
+			</div>
+			<div class="col-1 bg-secondary align-self-center">
+				<a class="btn btn-outline-danger" href="a/a.php?a=salir" role="button">SALIR</a>
+			</div>
+		</div>
+	</div>
+	<dic class="container-fluid py-1 px-1">
+		<dic class="row">
+			<div class="col-1 bg-light">
+				<?php
+				include_once('secciones/barra.php');
+				?>
+			</div>
+			<div class="col-11">
+				<?php
+				include_once('secciones/principal.php');
+				?>
+			</div>
+		</dic>
+	</dic>
+
+
+	<script src="js/jquery-3.5.1.min.js"></script>
+	<script src="js/popper.min.js"></script>
+	<script src="js/bootstrap.min.js"></script>
+	<?php
+	if(function_exists('jsScripts'))
+	{
+		jsScripts();
+	}
+	?>
+
+	</body>
+</html>
