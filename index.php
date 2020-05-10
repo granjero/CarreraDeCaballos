@@ -17,7 +17,7 @@ include_once('clases/conexion.php');
 	</head>
 	<body>
 		
-	<div class="container-fluid py-1 px-1">
+	<div class="container-fluid py-1 px-4">
 		<div class="row align-middle bg-secondary">
 			<div class="col-11 bg-secondary text-center">
 				<p class="h1">&#127937; &nbsp; &#128014; &nbsp; &#128014; &nbsp; &#128014;</p>
@@ -27,20 +27,20 @@ include_once('clases/conexion.php');
 			</div>
 		</div>
 	</div>
-	<dic class="container-fluid py-1 px-1">
-		<dic class="row">
-			<div class="col-1 bg-light">
+	<div class="container-fluid py-1 px-4">
+		<div class="row">
+			<!--<div class="col-1 bg-light">-->
 				<?php
-				include_once('secciones/barra.php');
+				//include_once('secciones/barra.php');
 				?>
-			</div>
-			<div class="col-11">
+			<!--</div>-->
+			<!--<div class="col-11">-->
 				<?php
 				include_once('secciones/principal.php');
 				?>
-			</div>
-		</dic>
-	</dic>
+			<!--</div>-->
+		</div>
+	</div>
 
 
 	<script src="js/jquery-3.5.1.min.js"></script>
