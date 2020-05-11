@@ -1,13 +1,13 @@
 
-<div class="container-fluid">
 <?php
 if( !isset( $_SESSION['CDC'] ) )
 {
 	?>
-	<form action="a/a.php" method="GET">
+	<div class="container-fluid">
+		<form action="a/a.php" method="GET">
 			<div class="row py-2">
 				<div class="col-2">
-					<input id="nombre" type="text" placeholder="Nombre..." name="nombre" onkeyup="check();">
+					<input id="nombre" type="text" placeholder="Tu Nombre..." name="nombre" onkeyup="check();">
 				</div>
 				<div class="col-2">
 					<button id="boton1" type="submit" name="a" value="inicia" class="btn btn-primary" disabled>Iniciar Carrera</button>
@@ -21,35 +21,58 @@ if( !isset( $_SESSION['CDC'] ) )
 					<button id="boton2" type="submit" name="a" value="unirse" class="btn btn-primary" disabled>Unirse a una Carrera</button>
 				</div>
 			</div>
-	</form>
+		</form>
+	</div>
 	<?php
 }
 elseif ($_SESSION['esperandoJugadores'])
 {
 	?>
 
+<div class="container-fluid">
 	<div class="row py-2">
-		<div class="col-6">
-			<div class="alert alert-primary" role="alert">
-				Tu nombre: <?= $_SESSION['nombre'] ?> 
+		<div class="col-2">
+			<ul class="list-group">
+				<li class="list-group-item">JUGADORES:</li>
+				<div id="listaJugadores"></div>
+			</ul>
+		<?php
+			if ($_SESSION['admin'])
+			{
+		?>
+		<div class="py-2">
+			<a class="btn btn-block btn-success" href="./a/a.php?a=cierra_y_reparte" role="button">Reparte las Cartas</a>
+			<!--<button id="boton3" type="submit" name="a" value="cierra_y_reparte" class="btn btn-success btn-block">Reparte las Cartas</button>-->
+		</div>
+		<?php
+			}
+		?>
+		</div>
+		<div class="col-10">
+			<div class="row py-2">
+				<div class="col-6">
+					<div class="alert alert-primary" role="alert">
+						Tu nombre: <?= $_SESSION['nombre'] ?> 
+					</div>
+				</div>
+			</div>
+			<div class="row py-2">
+				<div class="col-6">
+					<div class="alert alert-primary" role="alert">
+						ID partida: <?= $_SESSION['idCDC'] ?> 
+					</div>
+				</div>
+			</div>
+			<div class="row py-2">
+				<div class="col-6"></div>
 			</div>
 		</div>
-	</div>
-
-	<div class="row py-2">
-		<div class="col-6">
-			<div class="alert alert-primary" role="alert">
-				ID partida: <?= $_SESSION['idCDC'] ?> 
-			</div>
-		</div>
-	</div>
-	<div class="row py-2">
-		<div class="col-6"></div>
 	</div>
 </div>
 
 	<?php
 }
+
 function jsScripts()
 {
 	?>
@@ -69,6 +92,29 @@ function jsScripts()
 			document.getElementById('boton2').setAttribute('disabled', '');
 		}
 	}
+
+
+	<?php
+	if ($_SESSION['esperandoJugadores'])
+	{
+	?>	
+		window.setInterval(function(){
+			listaJugadores();
+		}, 1000);
+	<?php
+	}
+	?>	
+		function listaJugadores()
+		{
+			console.log('listado');
+			$.ajax({
+				url: 'a/listaJugadores.php',
+				success: function(respuesta)
+				{
+					$("#listaJugadores").html(respuesta);
+				}
+			});
+		}
 	</script>
 	<?php
 }

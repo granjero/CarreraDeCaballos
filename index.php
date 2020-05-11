@@ -2,9 +2,9 @@
 <?php 
 session_start();
 
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);
+//ini_set('display_errors', 1);
+//ini_set('display_startup_errors', 1);
+//error_reporting(E_ALL);
 
 var_dump($_SESSION);
 include_once('clases/conexion.php');
@@ -12,7 +12,7 @@ include_once('clases/conexion.php');
 <html lang="en">
 	<head>
 		<meta charset="UTF-8">
-		<title>&#127937; &nbsp; &#128014;</title>
+		<title>Carrera de  &#127937; &nbsp; &#128014;</title>
 		<link rel="stylesheet" href="css/bootstrap.min.css" media="all">
 	</head>
 	<body>
@@ -20,7 +20,8 @@ include_once('clases/conexion.php');
 	<div class="container-fluid py-1 px-4">
 		<div class="row align-middle bg-secondary">
 			<div class="col-11 bg-secondary text-center">
-				<p class="h1">&#127937; &nbsp; &#128014; &nbsp; &#128014; &nbsp; &#128014;</p>
+				<!--<p class="h1">&#127937; &nbsp; &#128014; &nbsp; &#128014; &nbsp; &#128014;</p>-->
+				<p class="h1">&#127937; <?= randomAnimal(4)?></p>
 			</div>
 			<div class="col-1 bg-secondary align-self-center">
 				<a class="btn btn-outline-danger" href="a/a.php?a=salir" role="button">SALIR</a>
@@ -50,6 +51,16 @@ include_once('clases/conexion.php');
 	if(function_exists('jsScripts'))
 	{
 		jsScripts();
+	}
+
+	function randomAnimal($cant)
+	{
+		$animal = array("🦓","🦒","🐎","🐂","🐫","🦒","🐖","🦕","🦏","🦍","🐩","🐏","🐐","🐢","🐓","🐜","🐆");
+		for($i = 0; $i < $cant; $i++)
+		{
+			$array = shuffle($animal);
+			echo $animal[0]." ";
+		}
 	}
 	?>
 
