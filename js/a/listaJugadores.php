@@ -32,17 +32,13 @@ foreach($lista as $llave => $valor)
 {
 	if(rtrim($lista[$fila]['nombre']) == 'LISTO_JUGADORES')
 	{
-		if($_SESSION['esperandoApuestas'])
-		{
-			break;	
-		}
 	?>
 		<a class="btn btn-block btn-success" href="./a/a.php?a=ver_cartas" role="button">Ver Cartas</a>
 	<?php
 		break;
 	}
 ?>
-	<li id="<?= $lista[$fila]['nombre'] ?>" class="list-group-item"><?= $lista[$fila]['nombre'] ?></li>
+	<li class="list-group-item"><?= $lista[$fila]['nombre'] ?></li>
 <?php
 $fila++;
 }

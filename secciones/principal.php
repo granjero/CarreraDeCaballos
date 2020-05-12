@@ -73,6 +73,46 @@ elseif ($_SESSION['esperandoJugadores'])
 	<?php
 }
 
+
+elseif ($_SESSION['esperandoApuestas'])
+{
+	?>
+
+<div class="container-fluid">
+	<div class="row py-2">
+		<div class="col-2">
+			<ul class="list-group">
+				<li class="list-group-item list-group-item-secondary text-center">Participantes</li>
+				<?php include_once('./a/listaJugadores.php'); ?>
+			</ul>
+			<div id="cartasEnMano"></div>
+		</div>
+		<div class="col-10">
+			<div class="row py-2">
+				<div class="col-6">
+					<div class="alert alert-primary" role="alert">
+						Tu nombre: <?= $_SESSION['nombre'] ?> 
+					</div>
+				</div>
+			</div>
+			<div class="row py-2">
+				<div class="col-6">
+					<div class="alert alert-primary" role="alert">
+						ID partida: <?= $_SESSION['idCDC'] ?> 
+					</div>
+				</div>
+			</div>
+			<div class="row py-2">
+				<div class="col-6"></div>
+			</div>
+		</div>
+	</div>
+</div>
+
+	<?php
+}
+
+
 function jsScripts()
 {
 	?>
@@ -112,6 +152,29 @@ function jsScripts()
 				success: function(respuesta)
 				{
 					$("#listaJugadores").html(respuesta);
+				}
+			});
+		}
+
+
+	<?php
+	if ($_SESSION['esperandoApuestas'])
+	{
+	?>	
+		window.setInterval(function(){
+			cartasEnMano();
+		}, 1000);
+	<?php
+	}
+	?>	
+		function cartasEnMano()
+		{
+			console.log('mano');
+			$.ajax({
+				url: 'a/cartasEnMano.php',
+				success: function(respuesta)
+				{
+					$("#cartasEnMano").html(respuesta);
 				}
 			});
 		}

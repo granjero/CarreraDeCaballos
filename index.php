@@ -6,7 +6,6 @@ session_start();
 //ini_set('display_startup_errors', 1);
 //error_reporting(E_ALL);
 
-var_dump($_SESSION);
 include_once('clases/conexion.php');
 ?>
 <html lang="en">
@@ -15,8 +14,9 @@ include_once('clases/conexion.php');
 		<title>Carrera de  &#127937; &nbsp; &#128014;</title>
 		<link rel="stylesheet" href="css/bootstrap.min.css" media="all">
 	</head>
+
 	<body>
-		
+<?php var_dump($_SESSION); ?>
 	<div class="container-fluid py-1 px-4">
 		<div class="row align-middle bg-secondary">
 			<div class="col-11 bg-secondary text-center">
