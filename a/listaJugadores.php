@@ -30,11 +30,11 @@ $query->close();
 $fila = 0;
 foreach($lista as $llave => $valor)
 {
-	if(rtrim($lista[$fila]['nombre']) == 'LISTO_JUGADORES')
+	if(rtrim($lista[$fila]['nombre']) == 'LISTO_JUGADORES')  // Corta la ejecución si en la tabla dice LISTO y pone el botón de ver cartas
 	{
-		if($_SESSION['esperandoApuestas'])
+		if($_SESSION['esperandoApuestas']) // Corta la ejecución si se esperan apuestas
 		{
-			break;	
+			break;
 		}
 	?>
 		<a class="btn btn-block btn-success" href="./a/a.php?a=ver_cartas" role="button">Ver Cartas</a>

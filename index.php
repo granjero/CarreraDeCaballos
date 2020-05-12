@@ -56,10 +56,10 @@ include_once('clases/conexion.php');
 	function randomAnimal($cant)
 	{
 		$animal = array("🦓","🦒","🐎","🐂","🐫","🦒","🐖","🦕","🦏","🦍","🐩","🐏","🐐","🐢","🐓","🐜","🐆");
+		shuffle($animal);
 		for($i = 0; $i < $cant; $i++)
 		{
-			$array = shuffle($animal);
-			echo $animal[0]." ";
+			echo $animal[$i]." ";
 		}
 	}
 	?>
