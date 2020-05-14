@@ -15,7 +15,7 @@ $query = $sql->prepare('call lista_jugadores (?)');
 //$query->bind_param('s', $idses);
 $query->bind_param('s', $_SESSION['idCDC']);
 $query->execute();
-$query->bind_result($nombre, $admin);
+$query->bind_result($nombre, $admin, $turnoJugador);
 while ($query->fetch())
 {
 	//echo $nombre."<br>";
@@ -23,16 +23,22 @@ while ($query->fetch())
 		array(
 			"nombre" => $nombre
 			,"admin" => $admin
+			,"turno" => $turnoJugador
 		);
 }
 $query->close();
 //die(var_dump($lista));
 $fila = 0;
+$turno = 1;
 foreach($lista as $llave => $valor)
 {
+	if(rtrim($lista[$fila]['nombre']) == $_SESSION['nombre'])
+	{
+		$_SESSION['miTurno'] = $turno;
+	}
 	if(rtrim($lista[$fila]['nombre']) == 'LISTO_JUGADORES')  // Corta la ejecución si en la tabla dice LISTO y pone el botón de ver cartas
 	{
-		if($_SESSION['esperandoApuestas']) // Corta la ejecución si se esperan apuestas
+		if(!$_SESSION['esperandoJugadores']) // Corta la ejecución si se esperan apuestas
 		{
 			break;
 		}
@@ -42,8 +48,9 @@ foreach($lista as $llave => $valor)
 		break;
 	}
 ?>
-	<li id="<?= $lista[$fila]['nombre'] ?>" class="list-group-item"><?= $lista[$fila]['nombre'] ?></li>
+	<li id="<?= $lista[$fila]['nombre'] ?>" class="list-group-item"> <?= $lista[$fila]['turno'] == 0 ? '': $lista[$fila]['turno'] . " - " ?>  <?= $lista[$fila]['nombre'] ?></li>
 <?php
 $fila++;
+$turno++;
 }
 ?>

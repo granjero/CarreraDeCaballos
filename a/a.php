@@ -87,17 +87,36 @@ switch($accion)
 			$sql = NULL; //
 			$sql = $conn->Open();
 			$sql->select_db("estonoesunaweb_CDC");
-			$query = $sql->prepare('call une_a_partida(?,?)');
-			$query->bind_param('ss', $_SESSION['idCDC'], $_SESSION['nombre']);
+			$query = $sql->prepare('call check_partida_cerrada(?)');
+			$query->bind_param('s', $_SESSION['idCDC']);
 			$query->execute();
+			$query->bind_result($cerrada);
+			$query->fetch();
 			$query->close();
+			if($cerrada)
+			{
+				session_destroy();
+				session_unset();
+				die('Ya empezó esa partida >>> ERROR');
+			}
+			else
+			{
+				$conn = New claseConexion();
+				$sql = NULL; //
+				$sql = $conn->Open();
+				$sql->select_db("estonoesunaweb_CDC");
+				$query = $sql->prepare('call une_a_partida(?,?)');
+				$query->bind_param('ss', $_SESSION['idCDC'], $_SESSION['nombre']);
+				$query->execute();
+				$query->close();
+			}
 		}
 		header('Location: ../');
 		break;
 		
 	case 'cierra_y_reparte':
-		// Una vez que están los jugadores se cierra a partida y se reparten las cartas.
-		//include_once('../clases/conexion.php');
+		// Una vez que están los jugadores se cierra a partida ,se reparten las cartas y se sortean los turnos.
+		// 
 		$_SESSION['esperandoJugadores'] = FALSE;
 		$_SESSION['esperandoApuestas'] = TRUE;
 		$conn = New claseConexion();
@@ -108,8 +127,8 @@ switch($accion)
 		$query->bind_param('s', $_SESSION['idCDC']);
 		$query->execute();
 		$query->close();
-		//include_once('a/reparteCartas.php');
 		
+		// Arma el mazo en el aray mazo
 		$conn = New claseConexion();
 		$sql = NULL; //
 		$sql = $conn->Open();
@@ -132,6 +151,7 @@ switch($accion)
 		}
 		$query->close();
 
+		// Arma la lista de jugadores en el array listaJugadores
 		$conn = New claseConexion();
 		$sql = NULL; //
 		$sql = $conn->Open();
@@ -140,7 +160,7 @@ switch($accion)
 		//$query->bind_param('s', $idses);
 		$query->bind_param('s', $_SESSION['idCDC']);
 		$query->execute();
-		$query->bind_result($nombre, $admin);
+		$query->bind_result($nombre, $admin, $turnoJugdor);
 		while ($query->fetch())
 		{
 			if(rtrim($nombre) == 'LISTO_JUGADORES')
@@ -151,6 +171,7 @@ switch($accion)
 			$listaJugadores[] =
 				array(
 					"nombre" => $nombre
+					,"turno" => $turnoJugdor
 				);
 		}
 		$query->close();
@@ -163,7 +184,7 @@ switch($accion)
 		$contadorJugadores = 0;
 		$cantidadJugadores = count($listaJugadores);
 
-
+		// reparte el mazo
 		$conn = New claseConexion();
 		$sql = NULL; //
 		$sql = $conn->Open();
@@ -181,22 +202,90 @@ switch($accion)
 			,$mazo[$contadorMazo]['avanza']
 			,$mazo[$contadorMazo]['multiplica']
 			,$mazo[$contadorMazo]['maximo']
-		);
+			);
 			$query->execute();
 			$contadorJugadores++;
 			$contadorJugadores = $contadorJugadores >= $cantidadJugadores ? 0 : $contadorJugadores ;
 			$contadorMazo++;
 		}
 		$query->close();
+
+
+		// asigna turnos 
+		$conn = New claseConexion();
+		$sql = NULL; //
+		$sql = $conn->Open();
+		$sql->select_db("estonoesunaweb_CDC");
+		$query = $sql->prepare('call asigna_turnos(?,?,?)');
+		$contador = 0;
+		$turno = 1;
+		shuffle($listaJugadores);
+		shuffle($listaJugadores);
+		shuffle($listaJugadores);
+		foreach($listaJugadores as $llave => $valor)
+		{
+			$query->bind_param('ssi'
+			,$_SESSION['idCDC']
+			,$listaJugadores[$contador]['nombre']
+			,$turno
+			);
+			$query->execute();
+			$contador++;
+			$turno++;
+		}
+		$query->close();
+
+		// Trae el saldo del jugador
+		$conn = New claseConexion();
+		$sql = NULL; //
+		$sql = $conn->Open();
+		$sql->select_db("estonoesunaweb_CDC");
+		$query = $sql->prepare('call get_dinero_jugador(?,?)');
+		$query->bind_param('ss', $_SESSION['idCDC'], $_SESSION['nombre']);
+		$query->execute();
+		$query->bind_result($dinero);
+		$query->fetch();
+		$query->close();
+		$_SESSION['dinero'] = $dinero;
 		header('Location: ../');
 		break;
 
 	case 'ver_cartas':
 		$_SESSION['esperandoJugadores'] = FALSE;
 		$_SESSION['esperandoApuestas'] = TRUE;
+		// Trae el saldo del jugador
+		$conn = New claseConexion();
+		$sql = NULL; //
+		$sql = $conn->Open();
+		$sql->select_db("estonoesunaweb_CDC");
+		$query = $sql->prepare('call get_dinero_jugador(?,?)');
+		$query->bind_param('ss', $_SESSION['idCDC'], $_SESSION['nombre']);
+		$query->execute();
+		$query->bind_result($dinero);
+		$query->fetch();
+		$query->close();
+		$_SESSION['dinero'] = $dinero;
 		header('Location: ../');
 		break;
 
+	case 'cerrarApuestas':
+		$_SESSION['esperandoJugadores'] = FALSE;
+		$_SESSION['esperandoApuestas'] = FALSE;
+		$_SESSION['apuestasCerradas'] = TRUE;
+
+		$conn = New claseConexion();
+		$sql = NULL; //
+		$sql = $conn->Open();
+		$sql->select_db("estonoesunaweb_CDC");
+		$query = $sql->prepare('call cerrar_apuestas (?,?)');
+		$query->bind_param('ssi'
+		,$_SESSION['idCDC']
+		,$listaJugadores[$contador]['nombre']
+		);
+		$query->execute();
+		$query->close();
+		header('Location: ../');
+		break;
 
 	case 'salir':
 		session_unset();
