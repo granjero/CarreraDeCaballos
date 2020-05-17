@@ -49,13 +49,14 @@ $arrayEmojiCaballo = array( "a" => "🐢", "b" => "🐪", "c" => "🦕", "d" => 
 	$contador = 0;
 	foreach($mano as $clave => $valor)
 	{
+		$link = $_SESSION['miTurno'] == $_SESSION['turnoActual'] ? 'href="a/jugarCarta.php?idCarta='.$mano[$contador]['idCarta'].'"' : '';
 		$textoCarta  = $arrayEmojiCaballo[$mano[$contador]['caballo']];
 		$textoCarta .= $mano[$contador]['posicion'] == 0 ? "+" . $mano[$contador]['avanza'] : "";
 		$textoCarta .= $mano[$contador]['posicion'] == 1 ? "1ºX3" : "";
 		$textoCarta .= $mano[$contador]['posicion'] >= 2 && $mano[$contador]['posicion'] <= 10 ? $mano[$contador]['posicion'] ."º+". $mano[$contador]['avanza'] : "";
-		$textoCarta .= $mano[$contador]['posicion'] == 99 ? "max" . $mano[$contador]['avanza'] : "";
+		$textoCarta .= $mano[$contador]['posicion'] == 99 ? "+" . $mano[$contador]['avanza'] ."mx" : "";
 	?>
-		<a class="text-center list-group-item w-50 list-group-item-action <?= $arrayColoresCaballo[$mano[$contador]['caballo']]?>" href="#"><?= $textoCarta ?></a>
+		<a class="text-center list-group-item w-50 list-group-item-action <?= $arrayColoresCaballo[$mano[$contador]['caballo']]?>" <?= $link ?>><?= $textoCarta ?></a>
 	<?php
 		$contador++;
 	}

@@ -278,12 +278,72 @@ switch($accion)
 		$sql = $conn->Open();
 		$sql->select_db("estonoesunaweb_CDC");
 		$query = $sql->prepare('call cerrar_apuestas (?,?)');
-		$query->bind_param('ssi'
-		,$_SESSION['idCDC']
-		,$listaJugadores[$contador]['nombre']
+		$query->bind_param('ss'
+			,$_SESSION['idCDC']
+			,$_SESSION['nombre']
 		);
 		$query->execute();
 		$query->close();
+
+
+		// Arma la lista de jugadores en el array listaJugadores
+		$conn = New claseConexion();
+		$sql = NULL; //
+		$sql = $conn->Open();
+		$sql->select_db("estonoesunaweb_CDC");
+		$query = $sql->prepare('call lista_jugadores (?)');
+		//$query->bind_param('s', $idses);
+		$query->bind_param('s', $_SESSION['idCDC']);
+		$query->execute();
+		$query->bind_result($nombre, $admin, $turnoJugdor);
+		while ($query->fetch())
+		{
+			if(rtrim($nombre) == 'LISTO_JUGADORES')
+			{
+				break;
+			}
+			//echo $nombre."<br>";
+			$_SESSION['listaJugadores'][$turnoJugdor] = $nombre; 
+		}
+		$query->close();
+
+		
+
+		if($_SESSION['miTurno'] == 1)
+		{
+			$conn = New claseConexion();
+			$sql = NULL; //
+			$sql = $conn->Open();
+			$sql->select_db("estonoesunaweb_CDC");
+			$query = $sql->prepare('call set_primer_turno_parida (?)');
+			$query->bind_param('s'
+				,$_SESSION['idCDC']
+			);
+			$query->execute();
+			$query->close();
+
+			// Pone los caballos en cero
+			$conn = New claseConexion();
+			$sql = NULL; //
+			$sql = $conn->Open();
+			$sql->select_db("estonoesunaweb_CDC");
+			$query = $sql->prepare('call set_primer_turno_carrera(?)');
+			$query->bind_param('s'
+				,$_SESSION['idCDC']
+			);
+			$query->execute();
+			$query->close();
+
+
+		}
+
+		header('Location: ../');
+		break;
+
+
+	case 'comenzarJuego':
+		$_SESSION['apuestasCerradas'] = FALSE;
+		$_SESSION['juegoIniciado'] = TRUE;
 		header('Location: ../');
 		break;
 

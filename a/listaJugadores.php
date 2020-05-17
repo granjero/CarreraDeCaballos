@@ -48,7 +48,7 @@ foreach($lista as $llave => $valor)
 		break;
 	}
 ?>
-	<li id="<?= $lista[$fila]['nombre'] ?>" class="list-group-item"> <?= $lista[$fila]['turno'] == 0 ? '': $lista[$fila]['turno'] . " - " ?>  <?= $lista[$fila]['nombre'] ?></li>
+	<li id="TURNO<?= $turno ?>" class="list-group-item"> <?= $lista[$fila]['turno'] == 0 ? '': $lista[$fila]['turno'] . " - " ?>  <?= $lista[$fila]['nombre'] ?></li>
 <?php
 $fila++;
 $turno++;

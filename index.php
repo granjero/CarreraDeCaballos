@@ -13,10 +13,13 @@ include_once('clases/conexion.php');
 		<meta charset="UTF-8">
 		<title>Carrera de  &#127937; &nbsp; &#128014;</title>
 		<link rel="stylesheet" href="css/bootstrap.min.css" media="all">
+		<link rel="stylesheet" href="css/cdc.css" media="all">
 	</head>
 
 	<body>
-<?php var_dump($_SESSION); ?>
+posCABALLOS<?php var_dump($_SESSION['posicionesCaballosTablero']); ?> <br />
+posJUEGO<?php var_dump($_SESSION['posicionesJuego']); ?>
+
 	<div class="container-fluid py-1 px-4">
 		<div class="row align-middle bg-secondary">
 			<div class="col-11 bg-secondary text-center">
@@ -56,7 +59,8 @@ include_once('clases/conexion.php');
 
 	function randomAnimal($cant)
 	{
-		$animal = array("🦓","🦒","🐎","🐂","🐫","🦒","🐖","🦕","🦏","🦍","🐩","🐏","🐐","🐢","🐓","🐜","🐆");
+		//$animal = array("🦓","🦒","🐎","🐂","🐫","🦒","🐖","🦕","🦏","🦍","🐩","🐏","🐐","🐢","🐓","🐜","🐆");
+		$animal = array("🐖","🦕","🐢","🐪");
 		shuffle($animal);
 		for($i = 0; $i < $cant; $i++)
 		{
