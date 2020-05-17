@@ -1,22 +1,16 @@
-/*
- * 
-.verde:after {
-	content: '🐢';
-	font-size: 2em;
+.verde{
+	font-size: 1.5em;
 }
 
-.amarillo:after {
-	content: '🐪';
-	font-size: 2em;
+.amarillo{
+	font-size: 1.5em;
 }
 
-.azul:after {
-	content: '🦕';
-	font-size: 2em;
+.azul{
+	font-size: 1.5em;
 }
 
-.rojo:after {
-	content: '🐖';
-	font-size: 2em;
+.rojo{
+	font-size: 1.5em;
 }
 */

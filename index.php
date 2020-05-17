@@ -17,8 +17,8 @@ include_once('clases/conexion.php');
 	</head>
 
 	<body>
-posCABALLOS<?php var_dump($_SESSION['posicionesCaballosTablero']); ?> <br />
-posJUEGO<?php var_dump($_SESSION['posicionesJuego']); ?>
+<?php // var_dump($_SESSION['posicionesCaballosTablero']); ?> <br />
+<?php // var_dump($_SESSION['posicionesJuego']); ?>
 
 	<div class="container-fluid py-1 px-4">
 		<div class="row align-middle bg-secondary">

@@ -274,8 +274,6 @@ elseif($CARTA[0]['posicion'] == 4)
 	}
 }
 
-
-
 elseif($CARTA[0]['posicion'] == 99)
 {
 	if($CARTA[0]['caballo'] != 'x' && $_SESSION['posicionesJuego'][$CARTA['caballo']] != 1 )
@@ -297,8 +295,7 @@ elseif($CARTA[0]['posicion'] == 99)
 		{
 			$CABALLO[0][$CARTA[0]['caballo']] = $numeroTableroCaballo1puesto - 4;
 		}
-
-
+		
 		// Actualiza posiciones de los caballos
 		$conn = New claseConexion();
 		$sql = NULL; //
@@ -310,19 +307,11 @@ elseif($CARTA[0]['posicion'] == 99)
 		//$query->bind_result($turnoActual);
 		//$query->fetch();
 		$query->close();
-
-
-
-
-
 	}
 	else
 	{
 		die('carta max comodin o caballo en primer puesto');
 	}
-
-
-
 }
 
 
