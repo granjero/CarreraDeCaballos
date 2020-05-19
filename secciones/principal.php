@@ -463,11 +463,13 @@ function jsScripts()
 				dataType: 'JSON',
 				success: function(respuesta)
 				{
-					//$("[id^=cas]").removeClass("bg-secondary");
-					$("#cas-"+respuesta.a).removeClass("border-dark");
-					$("#cas-"+respuesta.b).removeClass("border-dark");
-					$("#cas-"+respuesta.c).removeClass("border-dark");
-					$("#cas-"+respuesta.d).removeClass("border-dark");
+					console.log(respuesta.a + respuesta.b + respuesta.c + respuesta.d);
+					$("[id^=cas]").removeClass("border-dark");
+
+					//$("#cas-"+respuesta.a).removeClass("border-dark");
+					//$("#cas-"+respuesta.b).removeClass("border-dark");
+					//$("#cas-"+respuesta.c).removeClass("border-dark");
+					//$("#cas-"+respuesta.d).removeClass("border-dark");
 
 					$("#cas-"+respuesta.a).addClass("border-dark");
 					$("#cas-"+respuesta.b).addClass("border-dark");

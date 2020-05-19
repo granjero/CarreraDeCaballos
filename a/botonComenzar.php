@@ -1,9 +1,9 @@
 <?php
 session_start();
 
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);
+//ini_set('display_errors', 1);
+//ini_set('display_startup_errors', 1);
+//error_reporting(E_ALL);
 
 include_once('../clases/conexion.php');
 
@@ -28,7 +28,7 @@ while ($query->fetch())
 		);
 }
 $query->close();
-$_SESSION['posicionesCaballosTablero'] = $CABALLO[0];
+//$_SESSION['posicionesCaballosTablero'] = $CABALLO[0];
 
 //var_dump($_SESSION);
 $conn = New claseConexion();

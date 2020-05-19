@@ -1,5 +1,5 @@
 	<div class="container-fluid">
-		<div style="height: 45px;" class="row">
+		<div class="row">
 			<div class="col-1 bg-light border" id="cas-69">69 </div>
 			<div class="col-1 bg-light border" id="cas-70">70 </div>
 			<div class="col-1 bg-light border" id="cas-71">71 </div>
@@ -13,7 +13,7 @@
 			<div class="col-1 bg-light border" id="cas-79">79 </div>
 			<div class="col-1 bg-light border" id="cas-80">80</div>
 		</div>
-		<div style="height: 45px;" class="row">
+		<div class="row">
 			<div class="col-1 bg-light border" id="cas-68">68 </div>
 			<div class="col-1"> </div>
 			<div class="col-1"> </div>
@@ -27,7 +27,7 @@
 			<div class="col-1"> </div>
 			<div class="col-1"> </div>
 		</div>
-		<div style="height: 45px;" class="row">
+		<div class="row">
 			<div class="col-1 bg-light border" id="cas-67">67 </div>
 			<div class="col-1"> </div>
 			<div class="col-1 bg-light border" id="cas-29">29 </div>
@@ -41,7 +41,7 @@
 			<div class="col-1 bg-light border" id="cas-37">37 </div>
 			<div class="col-1 bg-light border" id="cas-38">38 </div>
 		</div>
-		<div style="height: 45px;" class="row">
+		<div class="row">
 			<div class="col-1 bg-light border" id="cas-66">66 </div>
 			<div class="col-1"> </div>
 			<div class="col-1 bg-light border" id="cas-28">28 </div>
@@ -55,7 +55,7 @@
 			<div class="col-1"> </div>
 			<div class="col-1 bg-light border" id="cas-39">39 </div>
 		</div>
-		<div  style="height: 45px;" class="row">
+		<div  class="row">
 			<div class="col-1 bg-light border" id="cas-65">65 </div>
 			<div class="col-1"> </div>
 			<div class="col-1 bg-light border" id="cas-27">27 </div>
@@ -69,7 +69,7 @@
 			<div class="col-1"> </div>
 			<div class="col-1 bg-light border" id="cas-40">40 </div>
 		</div>
-		<div  style="height: 45px;" class="row">
+		<div  class="row">
 			<div class="col-1 bg-light border" id="cas-64">64 </div>
 			<div class="col-1"> </div>
 			<div class="col-1 bg-light border" id="cas-26">26 </div>
@@ -83,7 +83,7 @@
 			<div class="col-1"> </div>
 			<div class="col-1 bg-light border" id="cas-41">41 </div>
 		</div>
-		<div  style="height: 45px;" class="row">
+		<div  class="row">
 			<div class="col-1 bg-light border" id="cas-63">63 </div>
 			<div class="col-1"> </div>
 			<div class="col-1 bg-light border" id="cas-25">25 </div>
@@ -97,21 +97,21 @@
 			<div class="col-1"> </div>
 			<div class="col-1 bg-light border" id="cas-42">42 </div>
 		</div>
-		<div  style="height: 45px;" class="row">
+		<div  class="row">
 			<div class="col-1 bg-light border" id="cas-62">62 </div>
 			<div class="col-1"> </div>
 			<div class="col-1 bg-light border" id="cas-24">24 </div>
 			<div class="col-1"> </div>
 			<div class="col-1 bg-light border" id="cas-2">2 </div>
 			<div class="col-1 bg-light border" id="cas-1">1 </div>
-			<div class="col-1 text-center">SALIDA</div>
-			<div class="col-1"> </div>
+			<div class="col-1 bg-light border text-center" id="cas-0">SALIDA</div>
+			<div class="col-1"></div>
 			<div class="col-1"> </div>
 			<div class="col-1 bg-light border" id="cas-13">13 </div>
 			<div class="col-1"> </div>
 			<div class="col-1 bg-light border" id="cas-43">43 </div>
 		</div>
-		<div  style="height: 45px;" class="row">
+		<div  class="row">
 			<div class="col-1 bg-light border" id="cas-61">61 </div>
 			<div class="col-1"> </div>
 			<div class="col-1 bg-light border" id="cas-23">23 </div>
@@ -125,7 +125,7 @@
 			<div class="col-1"> </div>
 			<div class="col-1 bg-light border" id="cas-44">44 </div>
 		</div>
-		<div  style="height: 45px;" class="row">
+		<div  class="row">
 			<div class="col-1 bg-light border" id="cas-60">60 </div>
 			<div class="col-1"> </div>
 			<div class="col-1 bg-light border" id="cas-22">22 </div>
@@ -139,7 +139,7 @@
 			<div class="col-1"> </div>
 			<div class="col-1 bg-light border" id="cas-45">45 </div>
 		</div>
-		<div  style="height: 45px;" class="row">
+		<div  class="row">
 			<div class="col-1 bg-light border" id="cas-59">59 </div>
 			<div class="col-1"> </div>
 			<div class="col-1"> </div>
@@ -153,7 +153,7 @@
 			<div class="col-1"> </div>
 			<div class="col-1 bg-light border" id="cas-46">46 </div>
 		</div>
-		<div  style="height: 45px;" class="row">
+		<div  class="row">
 			<div class="col-1 bg-light border" id="cas-58">58 </div>
 			<div class="col-1 bg-light border" id="cas-57">57 </div>
 			<div class="col-1 bg-light border" id="cas-56">56 </div>
@@ -166,5 +166,9 @@
 			<div class="col-1 bg-light border" id="cas-49">49 </div>
 			<div class="col-1 bg-light border" id="cas-48">48 </div>
 			<div class="col-1 bg-light border" id="cas-47">47 </div>
+		</div>
+		<div class="row pt-3">
+			<div style="font-size:2em;" class="col-1 text-center border" id="cas-1000">🏆</div>
+			<div style="font-size:2em;" class="col-1 text-center border" id="cas-750">🥈</div>
 		</div>
 	</div>

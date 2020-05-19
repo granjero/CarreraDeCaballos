@@ -19,7 +19,7 @@ $query->bind_result($caballoA, $caballoB, $caballoC, $caballoD);
 while ($query->fetch())
 {
 	//echo $nombre."<br>";
-	$CABALLO[] =
+	$CABALLO =
 		array(
 			"a" => $caballoA
 			,"b" => $caballoB
@@ -29,8 +29,6 @@ while ($query->fetch())
 }
 $query->close();
 
-//arsort($CABALLO[0]);
-//$_SESSION['posicionesCaballosTablero'] = $CABALLO[0];
-echo json_encode($CABALLO[0]);
+echo json_encode($CABALLO);
 
 ?>

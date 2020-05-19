@@ -1,3 +1,4 @@
+<pre>
 <?php
 session_start();
 
@@ -5,46 +6,47 @@ ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
-
 $idCarta = filter_input(INPUT_GET, 'idCarta');
-//die(var_dump($idCarta));
+$caballoSeleccionado = filter_input(INPUT_GET, 'caballo');
+//die(var_dump($caballoSeleccionado));
 
+// Chequea que sea el turno
 if ($_SESSION['turnoActual'] != $_SESSION['miTurno'])
 {
-	die('ERROR de turnos');
+	die('ERROR -> Esto no debería pasar. Es algo de los turnos.');
 }
 
 include_once('../clases/conexion.php');
 
 //var_dump($_SESSION);
 
-// busca caracteristicas de la carta jugada
+// LEE LA CARTA DE LA BASE DE DATOS Y LA GUARDA EN $CARTA 
+// ======================================================
 $conn = New claseConexion();
-$sql = NULL; //
+$sql = NULL; 
 $sql = $conn->Open();
 $sql->select_db("estonoesunaweb_CDC");
 $query = $sql->prepare('call get_carta(?)');
-//$query->bind_param('s', $idses);
 $query->bind_param('i', $idCarta);
 $query->execute();
-$query->bind_result($id, $caballo, $posicion, $avanza, $multiplica, $maximo);
+$query->bind_result($id, $animal, $posicion, $avanza, $multiplica, $maximo);
 while ($query->fetch())
 {
 	//echo $nombre."<br>";
-	$CARTA[] =
+	$CARTA =
 		array(
-			"caballo" => $caballo
-			,"posicion" => $posicion
-			,"avanza" => $avanza
-			,"multiplica" => $multiplica
-			,"maximo" => $maximo
+			"caballo"		=> $animal		// Letra de la carta
+			,"posicion"		=> $posicion	// Posición a la que aplica la carta (99 !primer puesto)
+			,"avanza"		=> $avanza		// Cuantos porotos se suman a al caballo
+			,"maximo"		=> $maximo		// relación con el primero
 		);
 }
 $query->close();
 
-// llama posicion caballos
+// LEE LA CANTIDAD DE POROTOS LOS CABALLOS Y LA GUARDA EN $CABALLOS
+// ===================================================================
 $conn = New claseConexion();
-$sql = NULL; //
+$sql = NULL;
 $sql = $conn->Open();
 $sql->select_db("estonoesunaweb_CDC");
 $query = $sql->prepare('call get_caballo_carrera(?)');
@@ -54,28 +56,51 @@ $query->bind_result($caballoA, $caballoB, $caballoC, $caballoD);
 while ($query->fetch())
 {
 	//echo $nombre."<br>";
-	$CABALLO[] =
+	$CABALLOS =
 		array(
-			"a" => $caballoA
-			,"b" => $caballoB
-			,"c" => $caballoC
-			,"d" => $caballoD
+			"a"		=> $caballoA	// cantidad de porotos de cada caballo
+			,"b"	=> $caballoB	// cantidad de porotos de cada caballo
+			,"c"	=> $caballoC	// cantidad de porotos de cada caballo
+			,"d"	=> $caballoD	// cantidad de porotos de cada caballo
 		);
 }
 $query->close();
+arsort($CABALLOS);
 
-// EN ESTE PUNTO TENGO EL ARRAY CARTA[0] QUE TIENE LA CARTA JUGADA
-// Y TENGTO EL ARRAY CABALLO[0] QUE TIENE EL NUMERO DE CASILLA DE CADA CABALLO
-// CALCULO 
-arsort($CABALLO[0]);
-$_SESSION['posicionesCaballosTablero'] = $CABALLO[0];
-
-
-obtienePosJuego();
-
-if($CARTA[0]['posicion'] == 0)
+// ARMA LA TABLA DE POSICIONES
+// ===========================
+$anterior = 9999;
+$contador = 0;
+$contadorExtra = 0;
+foreach($CABALLOS as $llave => $valor)
 {
-	$CABALLO[0][$CARTA[0]['caballo']] += $CARTA[0]['avanza'];
+	if($anterior != $valor)
+	{
+		$contador += $contadorExtra;
+		$contador++;
+		$contadorExtra = 0;
+	}
+	else
+	{
+		$contadorExtra++;
+	}
+	$POSICIONES[$llave] = $contador; 
+	$anterior = $valor;
+}
+asort($POSICIONES);
+
+
+//var_dump($CARTA);
+//var_dump($CABALLOS);
+//var_dump($POSICIONES);
+
+
+// SI LA CARTA ES PARA POSICIÓN 0
+// ==============================
+if($CARTA['posicion'] == 0)
+{
+	// actualiza el valor de $CABALLOS
+	$CABALLOS[$CARTA['caballo']] += $CARTA['avanza'];
 	
 	// Actualiza posiciones de los caballos
 	$conn = New claseConexion();
@@ -83,35 +108,35 @@ if($CARTA[0]['posicion'] == 0)
 	$sql = $conn->Open();
 	$sql->select_db("estonoesunaweb_CDC");
 	$query = $sql->prepare('call set_caballo_carrera(?,?,?,?,?,?)');
-	$query->bind_param('siiiii', $_SESSION['idCDC'],$CABALLO[0]['a'], $CABALLO[0]['b'], $CABALLO[0]['c'], $CABALLO[0]['d'], $idCarta);
+	$query->bind_param('siiiii', $_SESSION['idCDC'],$CABALLOS['a'], $CABALLOS['b'], $CABALLOS['c'], $CABALLOS['d'], $idCarta);
 	$query->execute();
-	//$query->bind_result($turnoActual);
-	//$query->fetch();
 	$query->close();
 }
 
-elseif($CARTA[0]['posicion'] == 1)
+// SI LA CARTA ES PARA POSICIÓN 1
+// ==============================
+elseif($CARTA['posicion'] == 1)
 {
-	if($_SESSION['posicionesJuego'][$CARTA[0]['caballo']] != 1 )
+	if( $POSICIONES[$CARTA['caballo']] != 1 )
 	{
-		die("ERROR el caballo seleccionado no está en el primer puesto");
+		die("ERROR -> El caballo seleccionado no está en el primer puesto. VOLVER ATRÁS.");
 	}
 	else
 	{
-		foreach( $_SESSION['posicionesJuego'] as $llave => $valor )
+		// saco la letra del caballo en la segunda posición
+		foreach( $POSICIONES as $llave => $valor )
 		{
-			if($valor == 2)
+			if( $valor == 2 )
 			{
 				$caballo2puesto = $llave;
 				break;
 			}
 		}
 		
-		$numeroTableroCaballo2puesto = $_SESSION['posicionesCaballosTablero'][$caballo2puesto];
-		$numeroTableroCaballoCartaJugada = $_SESSION['posicionesCaballosTablero'][$CARTA[0]['caballo']];
-		$nuevaPosCaballoCartaJugada = ( $numeroTableroCaballoCartaJugada - $numeroTableroCaballo2puesto ) * 2;
+		//var_dump(($CABALLOS[$CARTA['caballo']] - $CABALLOS[$caballo2puesto]) * 2);
+		//die();
 		
-		$CABALLO[0][$CARTA[0]['caballo']] += $nuevaPosCaballoCartaJugada;
+		$CABALLOS[$CARTA['caballo']] += (($CABALLOS[$CARTA['caballo']] - $CABALLOS[$caballo2puesto]) * 2);
 		
 		// Actualiza posiciones de los caballos
 		$conn = New claseConexion();
@@ -119,168 +144,219 @@ elseif($CARTA[0]['posicion'] == 1)
 		$sql = $conn->Open();
 		$sql->select_db("estonoesunaweb_CDC");
 		$query = $sql->prepare('call set_caballo_carrera(?,?,?,?,?,?)');
-		$query->bind_param('siiiii', $_SESSION['idCDC'],$CABALLO[0]['a'], $CABALLO[0]['b'], $CABALLO[0]['c'], $CABALLO[0]['d'], $idCarta);
+		$query->bind_param('siiiii', $_SESSION['idCDC'],$CABALLOS['a'], $CABALLOS['b'], $CABALLOS['c'], $CABALLOS['d'], $idCarta);
 		$query->execute();
-		//$query->bind_result($turnoActual);
-		//$query->fetch();
 		$query->close();
 	}
 }
 
-
-elseif($CARTA[0]['posicion'] == 2)
+// SI LA CARTA ES PARA POSICIÓN 2 
+// ==============================
+elseif($CARTA['posicion'] == 2)
 {
-	$contadorSegundoPuesto = 0;
-	foreach($_SESSION['posicionesJuego'] as $llave => $valor)
+	// controla que no haya mas de un segundo puesto
+	$contador2Puesto = 0;
+	foreach($POSICIONES as $llave => $valor)
 	{
 		if ($valor == 2)
 		{
-			$contadorSegundoPuesto++;
+			$contador2Puesto++;
 		}
 	}
-	foreach($_SESSION['posicionesJuego'] as $llave => $valor)
+	// saco la letra del caballo en la segunda posición
+	foreach( $POSICIONES as $llave => $valor )
 	{
-		if($valor == 2)
+		if( $valor == 2 )
 		{
 			$caballo2puesto = $llave;
 			break;
 		}
 	}
 
-	if($contadorSegundoPuesto == 0)
+	if($contador2Puesto == 0)
 	{
-		die('No hay segundo puesto');
+		die('ERROR -> No hay segundo puesto. VOLVER ATRÁS!');
 	}
-	elseif($contadorSegundoPuesto > 1)
+	elseif($contador2Puesto > 1)
 	{
-		die('Hay mas de un segundo puesto');
+		if(!is_null($caballoSeleccionado))
+		{
+			$CABALLOS[$caballoSeleccionado] += $CARTA['avanza'];
+			// Actualiza posiciones de los caballos
+			$conn = New claseConexion();
+			$sql = NULL;
+			$sql = $conn->Open();
+			$sql->select_db("estonoesunaweb_CDC");
+			$query = $sql->prepare('call set_caballo_carrera(?,?,?,?,?,?)');
+			$query->bind_param('siiiii', $_SESSION['idCDC'],$CABALLOS['a'], $CABALLOS['b'], $CABALLOS['c'], $CABALLOS['d'], $idCarta);
+			$query->execute();
+			$query->close();
+		}
+		else
+		{
+			header("Location: ../o/?idCarta=$idCarta");
+			exit;
+			//die('ERROR -> Hay mas de un segundo puesto. VOLVER ATRÁS');
+		}
 	}
 	else
 	{
-		$CABALLO[0][$caballo2puesto] += $CARTA[0]['avanza'];
+		$CABALLOS[$caballo2puesto] += $CARTA['avanza'];
 		
-		//die(var_dump($CARTA[0]['avanza']));
-
 		// Actualiza posiciones de los caballos
 		$conn = New claseConexion();
-		$sql = NULL; //
+		$sql = NULL;
 		$sql = $conn->Open();
 		$sql->select_db("estonoesunaweb_CDC");
 		$query = $sql->prepare('call set_caballo_carrera(?,?,?,?,?,?)');
-		$query->bind_param('siiiii', $_SESSION['idCDC'],$CABALLO[0]['a'], $CABALLO[0]['b'], $CABALLO[0]['c'], $CABALLO[0]['d'], $idCarta);
+		$query->bind_param('siiiii', $_SESSION['idCDC'],$CABALLOS['a'], $CABALLOS['b'], $CABALLOS['c'], $CABALLOS['d'], $idCarta);
 		$query->execute();
-		//$query->bind_result($turnoActual);
-		//$query->fetch();
 		$query->close();
-	
 	}
 }
 
+// SI LA CARTA ES PARA POSICIÓN 3 
+// ==============================
 
-elseif($CARTA[0]['posicion'] == 3)
+elseif($CARTA['posicion'] == 3)
 {
-	$contadorTercerPuesto = 0;
-	foreach($_SESSION['posicionesJuego'] as $llave => $valor)
+	// controla que no haya mas de un 3 puesto
+	$contador3Puesto = 0;
+	foreach($POSICIONES as $llave => $valor)
 	{
 		if ($valor == 3)
 		{
-			$contadorTercerPuesto++;
+			$contador3Puesto++;
 		}
 	}
-	foreach($_SESSION['posicionesJuego'] as $llave => $valor)
+	// saco la letra del caballo en la 3 posición
+	foreach( $POSICIONES as $llave => $valor )
 	{
-		if($valor == 3)
+		if( $valor == 3 )
 		{
 			$caballo3puesto = $llave;
 			break;
 		}
 	}
 
-	if($contadorTercerPuesto == 0)
+	if($contador3Puesto == 0)
 	{
-		die('No hay tercer puesto. Volvar atrás.');
+		die('ERROR -> No hay 3 puesto. VOLVER ATRÁS!');
 	}
-	elseif($contadorTercerPuesto > 1)
+	elseif($contador3Puesto > 1)
 	{
-		die('Hay mas de un tercer puesto... Ya lo voy a solucionar. Volvar atrás.');
+		if(!is_null($caballoSeleccionado))
+		{
+			$CABALLOS[$caballoSeleccionado] += $CARTA['avanza'];
+			// Actualiza posiciones de los caballos
+			$conn = New claseConexion();
+			$sql = NULL;
+			$sql = $conn->Open();
+			$sql->select_db("estonoesunaweb_CDC");
+			$query = $sql->prepare('call set_caballo_carrera(?,?,?,?,?,?)');
+			$query->bind_param('siiiii', $_SESSION['idCDC'],$CABALLOS['a'], $CABALLOS['b'], $CABALLOS['c'], $CABALLOS['d'], $idCarta);
+			$query->execute();
+			$query->close();
+		}
+		else
+		{
+			header("Location: ../o/?idCarta=$idCarta");
+			exit;
+			//die('ERROR -> Hay mas de un segundo puesto. VOLVER ATRÁS');
+		}
 	}
 	else
 	{
-		$CABALLO[0][$caballo3puesto] += $CARTA[0]['avanza'];
+		$CABALLOS[$caballo3puesto] += $CARTA['avanza'];
 		
-		//die(var_dump($CARTA[0]['avanza']));
-
 		// Actualiza posiciones de los caballos
 		$conn = New claseConexion();
-		$sql = NULL; //
+		$sql = NULL;
 		$sql = $conn->Open();
 		$sql->select_db("estonoesunaweb_CDC");
 		$query = $sql->prepare('call set_caballo_carrera(?,?,?,?,?,?)');
-		$query->bind_param('siiiii', $_SESSION['idCDC'],$CABALLO[0]['a'], $CABALLO[0]['b'], $CABALLO[0]['c'], $CABALLO[0]['d'], $idCarta);
+		$query->bind_param('siiiii', $_SESSION['idCDC'],$CABALLOS['a'], $CABALLOS['b'], $CABALLOS['c'], $CABALLOS['d'], $idCarta);
 		$query->execute();
-		//$query->bind_result($turnoActual);
-		//$query->fetch();
 		$query->close();
-	
 	}
 }
 
-
-elseif($CARTA[0]['posicion'] == 4)
+// SI LA CARTA ES PARA POSICIÓN 4 
+// ==============================
+elseif($CARTA['posicion'] == 4)
 {
-	$contadorCuartoPuesto = 0;
-	foreach($_SESSION['posicionesJuego'] as $llave => $valor)
+	// controla que no haya mas de un 4 puesto
+	$contador4Puesto = 0;
+	foreach($POSICIONES as $llave => $valor)
 	{
 		if ($valor == 4)
 		{
-			$contadorCuartoPuesto++;
+			$contador4Puesto++;
 		}
 	}
-	foreach($_SESSION['posicionesJuego'] as $llave => $valor)
+	// saco la letra del caballo en la 4 posición
+	foreach( $POSICIONES as $llave => $valor )
 	{
-		if($valor == 4)
+		if( $valor == 4 )
 		{
 			$caballo4puesto = $llave;
 			break;
 		}
 	}
 
-	if($contadorCuartoPuesto == 0)
+	if($contador4Puesto == 0)
 	{
-		die('No hay cuarto puesto. Volver atrás.');
+		die('ERROR -> No hay 4 puesto. VOLVER ATRÁS!');
 	}
-	elseif($contadorCuartoPuesto > 1)
+	elseif($contador4Puesto > 1)
 	{
-		die('Hay mas de un cuarto puesto ya lo voy a solucionar... Volver atrás.');
+		if(!is_null($caballoSeleccionado))
+		{
+			$CABALLOS[$caballoSeleccionado] += $CARTA['avanza'];
+			// Actualiza posiciones de los caballos
+			$conn = New claseConexion();
+			$sql = NULL;
+			$sql = $conn->Open();
+			$sql->select_db("estonoesunaweb_CDC");
+			$query = $sql->prepare('call set_caballo_carrera(?,?,?,?,?,?)');
+			$query->bind_param('siiiii', $_SESSION['idCDC'],$CABALLOS['a'], $CABALLOS['b'], $CABALLOS['c'], $CABALLOS['d'], $idCarta);
+			$query->execute();
+			$query->close();
+		}
+		else
+		{
+			header("Location: ../o/?idCarta=$idCarta");
+			exit;
+			//die('ERROR -> Hay mas de un segundo puesto. VOLVER ATRÁS');
+		}
 	}
 	else
 	{
-		$CABALLO[0][$caballo4puesto] += $CARTA[0]['avanza'];
+		$CABALLOS[$caballo4puesto] += $CARTA['avanza'];
 		
-		//die(var_dump($CARTA[0]['avanza']));
-
 		// Actualiza posiciones de los caballos
 		$conn = New claseConexion();
-		$sql = NULL; //
+		$sql = NULL;
 		$sql = $conn->Open();
 		$sql->select_db("estonoesunaweb_CDC");
 		$query = $sql->prepare('call set_caballo_carrera(?,?,?,?,?,?)');
-		$query->bind_param('siiiii', $_SESSION['idCDC'],$CABALLO[0]['a'], $CABALLO[0]['b'], $CABALLO[0]['c'], $CABALLO[0]['d'], $idCarta);
+		$query->bind_param('siiiii', $_SESSION['idCDC'],$CABALLOS['a'], $CABALLOS['b'], $CABALLOS['c'], $CABALLOS['d'], $idCarta);
 		$query->execute();
-		//$query->bind_result($turnoActual);
-		//$query->fetch();
 		$query->close();
-	
 	}
 }
 
-elseif($CARTA[0]['posicion'] == 99)
+// SI LA CARTA ES PARA POSICIÓN 99 
+// ===============================
+elseif($CARTA['posicion'] == 99)
 {
-	if($CARTA[0]['caballo'] != 'x' && $_SESSION['posicionesJuego'][$CARTA['caballo']] != 1 )
+	// para las cartas de un color en particular
+	if($CARTA['caballo'] != 'x' && $POSICIONES[$CARTA['caballo']] != 1 )
 	{	
-		$CABALLO[0][$CARTA[0]['caballo']] += $CARTA[0]['avanza'];
-		
-		foreach( $_SESSION['posicionesJuego'] as $llave => $valor )
+		$CABALLOS[$CARTA['caballo']] += $CARTA['avanza'];
+
+		// obtengo la letra del primer caballo
+		foreach( $POSICIONES as $llave => $valor )
 		{
 			if($valor == 1)
 			{
@@ -289,11 +365,9 @@ elseif($CARTA[0]['posicion'] == 99)
 			}
 		}
 		
-		$numeroTableroCaballo1puesto = $_SESSION['posicionesCaballosTablero'][$caballo1puesto];
-		
-		if($CABALLO[0][$CARTA[0]['caballo']] >= ($numeroTableroCaballo1puesto - 4) ) 
+		if($CABALLOS[$CARTA['caballo']] >= ($CABALLOS[$caballo1puesto] - 4) ) 
 		{
-			$CABALLO[0][$CARTA[0]['caballo']] = $numeroTableroCaballo1puesto - 4;
+			$CABALLOS[$CARTA['caballo']] = ($CABALLOS[$caballo1puesto] - 4);
 		}
 		
 		// Actualiza posiciones de los caballos
@@ -302,51 +376,55 @@ elseif($CARTA[0]['posicion'] == 99)
 		$sql = $conn->Open();
 		$sql->select_db("estonoesunaweb_CDC");
 		$query = $sql->prepare('call set_caballo_carrera(?,?,?,?,?,?)');
-		$query->bind_param('siiiii', $_SESSION['idCDC'],$CABALLO[0]['a'], $CABALLO[0]['b'], $CABALLO[0]['c'], $CABALLO[0]['d'], $idCarta);
+		$query->bind_param('siiiii', $_SESSION['idCDC'],$CABALLOS['a'], $CABALLOS['b'], $CABALLOS['c'], $CABALLOS['d'], $idCarta);
 		$query->execute();
-		//$query->bind_result($turnoActual);
-		//$query->fetch();
 		$query->close();
+	}
+	elseif($CARTA['caballo'] != 'x' && $POSICIONES[$CARTA['caballo']] == 1 )
+	{
+		die('ERROR -> caballo en primer puesto. VOLVLER ATRÁS.');
 	}
 	else
 	{
-		die('carta max comodin o caballo en primer puesto');
+		if(!is_null($caballoSeleccionado))
+		{
+			$CABALLOS[$caballoSeleccionado] += $CARTA['avanza'];
+			// obtengo la letra del primer caballo
+			foreach( $POSICIONES as $llave => $valor )
+			{
+				if($valor == 1)
+				{
+					$caballo1puesto = $llave;
+					break;
+				}
+			}
+			if($CABALLOS[$caballoSeleccionado] >= ($CABALLOS[$caballo1puesto] + 1) ) 
+			{
+				$CABALLOS[$caballoSeleccionado] = ($CABALLOS[$caballo1puesto] + 1);
+			}
+
+			// Actualiza posiciones de los caballos
+			$conn = New claseConexion();
+			$sql = NULL;
+			$sql = $conn->Open();
+			$sql->select_db("estonoesunaweb_CDC");
+			$query = $sql->prepare('call set_caballo_carrera(?,?,?,?,?,?)');
+			$query->bind_param('siiiii', $_SESSION['idCDC'],$CABALLOS['a'], $CABALLOS['b'], $CABALLOS['c'], $CABALLOS['d'], $idCarta);
+			$query->execute();
+			$query->close();
+		}
+		else
+		{
+			header("Location: ../o/?idCarta=$idCarta");
+			exit;
+			//die('ERROR -> Hay mas de un segundo puesto. VOLVER ATRÁS');
+		}
 	}
 }
 
 
 
 
-
-// llama posicion caballos
-$conn = New claseConexion();
-$sql = NULL; //
-$sql = $conn->Open();
-$sql->select_db("estonoesunaweb_CDC");
-$query = $sql->prepare('call get_caballo_carrera(?)');
-$query->bind_param('s', $_SESSION['idCDC']);
-$query->execute();
-$query->bind_result($caballoA, $caballoB, $caballoC, $caballoD);
-while ($query->fetch())
-{
-	//echo $nombre."<br>";
-	$CABALLO[] =
-		array(
-			"a" => $caballoA
-			,"b" => $caballoB
-			,"c" => $caballoC
-			,"d" => $caballoD
-		);
-}
-$query->close();
-
-
-
-
-arsort($CABALLO[0]);
-$_SESSION['posicionesCaballosTablero'] = $CABALLO[0];
-
-obtienePosJuego();
 
 $proximoTurno = $_SESSION['miTurno'] == count($_SESSION['listaJugadores']) ? 1 : $_SESSION['miTurno'] + 1;
 
@@ -377,35 +455,36 @@ $query->close();
 //$_SESSION['turnoActual'] = $turnoActual;
 //die(var_dump($turnoActual));
 
+$ganador = 1000;
+foreach($CABALLOS as $llave =>$valor)
+{
+	if ($valor >= 81 && $valor <= 500)
+	{
+		foreach($CABALLOS as $llave2=>$valor2)
+		{
+			if($valor2 == 1000)
+			{
+				$ganador -= 250;
+			}
+		}
+		//$CABALLO['GANADOR'] = $llave;
+		$CABALLOS[$llave] = $ganador;
+
+		// Actualiza posiciones de los caballos
+		$conn = New claseConexion();
+		$sql = NULL; //
+		$sql = $conn->Open();
+		$sql->select_db("estonoesunaweb_CDC");
+		$query = $sql->prepare('call set_caballo_carrera(?,?,?,?,?,?)');
+		$query->bind_param('siiiii', $_SESSION['idCDC'],$CABALLOS['a'], $CABALLOS['b'], $CABALLOS['c'], $CABALLOS['d'], $idCarta);
+		$query->execute();
+		$query->close();
+	}
+
+}
 
 //var_dump($proximoTurno);
 header('Location: ../');
-
-
-function obtienePosJuego()
-{
-	
-	arsort($_SESSION['posicionesCaballosTablero']);
-	$anterior = 9999;
-	$contador = 0;
-	$contadorExtra = 0;
-	foreach($_SESSION['posicionesCaballosTablero'] as $llave => $valor)
-	{
-		if($anterior != $valor)
-		{
-			$contador += $contadorExtra;
-			$contador++;
-			$contadorExtra = 0;
-		}
-		else
-		{
-			$contadorExtra++;
-		}
-		$_SESSION['posicionesJuego'][$llave] = $contador; 
-		$anterior = $valor;
-	}
-	asort($_SESSION['posicionesJuego']);
-}
 
 ?>
 
