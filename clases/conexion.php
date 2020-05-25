@@ -11,7 +11,7 @@ class claseConexion
     {
         $this->servidor = 'localhost';
         $this->usuario = 'estonoesunaweb_CDC';
-        $this->clave = '';
+        $this->clave = '123';
         $this->sql = 0;
     }
     
