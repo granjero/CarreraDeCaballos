@@ -28,7 +28,7 @@ while ($query->fetch())
 		);
 }
 $query->close();
-
+arsort($CABALLO);
 echo json_encode($CABALLO);
 
 ?>

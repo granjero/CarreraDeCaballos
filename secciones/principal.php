@@ -62,8 +62,7 @@ elseif ($_SESSION['esperandoJugadores'])
 			{
 		?>
 		<div class="py-2">
-			<a class="btn btn-block btn-success" href="a/a.php?a=cierra_y_reparte" role="button">Sortea los Turnos <br> y <br> Reparte las Suertes</a>
-			<!--<button id="boton3" type="submit" name="a" value="cierra_y_reparte" class="btn btn-success btn-block">Reparte las Cartas</button>-->
+			<a class="btn btn-block btn-success" href="a/a.php?a=cierra_y_reparte" role="button">Cierra el Ingreso <br>de Participantes</a>
 		</div>
 		<?php
 			}
@@ -198,7 +197,7 @@ elseif ($_SESSION['esperandoApuestas'])
 						</div>
 						<div class="row">
 							<div class="col-3 py-2">
-								<a href="a/a.php?a=cerrarApuestas" role="button" class="btn btn-lg btn-success btn-block <?= (isset($_SESSION['apuestasJugador']) ? '' : 'disabled' ) ?> ">Cerrar Apuestas</a>
+								<a href="a/a.php?a=cerrarApuestas" role="button" class="btn btn-lg btn-success btn-block <?= (isset($_SESSION['apuestasJugador']) ? '' : 'disabled' ) ?> ">Comenzar el Juego</a>
 							</div>
 						</div>
 					</form>
@@ -322,6 +321,8 @@ elseif ($_SESSION['juegoIniciado'])
 						</div>
 					</div>
 				</div>
+				<div id="decideCarta" class="row">
+				</div>
 				<div class="row py-2">
 					<?php include_once('secciones/tablero.php'); ?>
 				</div>
@@ -330,13 +331,62 @@ elseif ($_SESSION['juegoIniciado'])
 	</div>
 <?php
 }
+
+
+
+
+elseif ($_SESSION['juegoFinalizado'])
+{
+	?>
+	<div class="container-fluid">
+		<div class="row py-2">
+			<div class="col-12">
+				<div class="row py-2">
+						<?php include_once('a/listaJugadoresApuestas.php'); ?>
+				</div>
+			</div>
+		</div>
+	</div>
+<?php
+}
+?>
+
+<!-- Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+	<div class="modal-dialog modal-lg" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+			<h3 class="modal-title" id="exampleModalLabel">Suertes...</h3>
+			<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+				<span aria-hidden="true">&times;</span>
+			</button>
+			</div>
+			<div class="modal-body">
+			<p class="lead">Las suertes se utilizan para hacer avanzar los animales por la pista. <br />  El animal que primero cruza la casilla 80 gana.</p>
+			<hr>
+			<h5>Suertes de Color 🐢 🐪 🦕 🐖 </h5>
+			<p> +7 -> El animal de ese color avanza 7 casillas. </p>
+			<p>+10 -> El animal de ese color avanza 10 casillas. </p>
+			<p> 1ºX3 -> El animal del color correspondiente debe ser primero. Se triplica la distancia con el caballo que está en segundo lugar. </p>
+			<p>+30 mx -> El animal del color correspondiente NO puede ser primero. Avanza como máximo 30 casillas pero tiene que quedar como mínimo 4 casillas detrás del caballo que está en primer lugar. </p>
+			<hr>
+			<h5>Suertes Incoloras 🃏 </h5>
+			<p> +18mx -> Para cualquier animal que no esté en primer lugar. Avanza como máximo 18 casillas pero no puede pasar al primero por más de una casilla. </p>
+			<p> Xº+13 -> El animal que está en posición X avanza 13 casillas. </p>
+			</div>
+		</div>
+	</div>
+</div>
+
+
+<?php
 function jsScripts()
 {
 	?>
 	<script>
 	//En el inicio habilita iniciar partida o unirse
 	var check = function() {
-		console.log('keyup');
+		//console.log('keyup');
 		if ((document.getElementById('nombre').value.length >= 2))
 		{
 			document.getElementById('boton1').removeAttribute('disabled', '');
@@ -405,6 +455,7 @@ function jsScripts()
 	?>	
 		window.setInterval(function(){
 			botonComenzar();
+			console.log("botonComenzar:w")
 		}, 1000);
 	<?php
 	}
@@ -428,12 +479,46 @@ function jsScripts()
 	{
 	?>	
 		window.setInterval(function(){
+			statusPartida();
 			getTurno();
 			tablero();
 		}, 1000);
 	<?php
 	}
 	?>	
+		function statusPartida()
+		{
+			//console.log('mano');
+			$.ajax({
+				url: 'a/statusPartida.php',
+				success: function(respuesta)
+				{
+					//console.log(respuesta);
+					if(respuesta == 2)
+					{
+						cerrarPartida();
+					}
+				}
+			});
+		}
+
+		function cerrarPartida()
+		{
+			//console.log('mano');
+			$.ajax({
+				url: 'a/a.php?a=finalizarJuego',
+				success: function(respuesta)
+				{
+					// ACA VIENE UNA REDIRECCION A
+					console.log(respuesta);
+					if(respuesta == 'cerrada')
+					{
+						 location.reload(); 
+					}
+				}
+			});
+		}
+
 		function getTurno()
 		{
 			//console.log('mano');
@@ -441,7 +526,7 @@ function jsScripts()
 				url: 'a/getTurno.php',
 				success: function(respuesta)
 				{
-					console.log('TURNO'+respuesta);
+					//console.log('TURNO'+respuesta);
 					$("#TURNO1").removeClass("bg-danger");
 					$("#TURNO2").removeClass("bg-danger");
 					$("#TURNO3").removeClass("bg-danger");
@@ -463,13 +548,28 @@ function jsScripts()
 				dataType: 'JSON',
 				success: function(respuesta)
 				{
-					console.log(respuesta.a + respuesta.b + respuesta.c + respuesta.d);
+					var anterior = 9999;
+					var contador = 0;
+					var contadorExtra = 0;
+					var POSICIONES = [];
+					for(var k in respuesta) {
+						//console.log(k, respuesta[k]);
+						if(anterior != respuesta[k])
+						{
+							contador += contadorExtra;
+							contador++;
+							contadorExtra = 0;
+						}
+						else
+						{
+							contadorExtra++;
+						}
+						POSICIONES[k] = contador;
+						anterior = respuesta[k];
+					}
+					//console.log(POSICIONES);
+					//console.log("a" + respuesta.a + " - b" + respuesta.b + " - c" + respuesta.c + " - d" + respuesta.d);
 					$("[id^=cas]").removeClass("border-dark");
-
-					//$("#cas-"+respuesta.a).removeClass("border-dark");
-					//$("#cas-"+respuesta.b).removeClass("border-dark");
-					//$("#cas-"+respuesta.c).removeClass("border-dark");
-					//$("#cas-"+respuesta.d).removeClass("border-dark");
 
 					$("#cas-"+respuesta.a).addClass("border-dark");
 					$("#cas-"+respuesta.b).addClass("border-dark");
@@ -492,32 +592,33 @@ function jsScripts()
 					$("#cas-"+respuesta.d).append($ROJO);
 
 
+					var POSICIONEStablero = [];
+					POSICIONEStablero["a"] = "<span class='aling-middle verde'>🐢</span>";
+					POSICIONEStablero["b"] = "<span class='aling-middle amarillo'>🐪</span>"
+					POSICIONEStablero["c"] = "<span class='aling-middle azul'>🦕</span>"
+					POSICIONEStablero["d"] = "<span class='aling-middle rojo'>🐖</span>"
+					for (var j in POSICIONES)
+					{
+						if(POSICIONES[j] == 1)
+						{
+							$("#PRIMERO").append(POSICIONEStablero[j])
+						}
 
+						if(POSICIONES[j] == 2)
+						{
+							$("#SEGUNDO").append(POSICIONEStablero[j])
+						}
 
-					//console.log(respuesta.a);
-					//$("[id^=cas]").removeClass("bg-success");
-					//$("[id^=cas]").removeClass("bg-warning");
-					//$("[id^=cas]").removeClass("bg-info");
-					//$("[id^=cas]").removeClass("bg-danger");
-					
-					//$("[id^=cas]").removeClass("verde");
-					//$("[id^=cas]").removeClass("amarillo");
-					//$("[id^=cas]").removeClass("azul");
-					//$("[id^=cas]").removeClass("rojo");
+						if(POSICIONES[j] == 3)
+						{
+							$("#TERCERO").append(POSICIONEStablero[j])
+						}
 
-					//$("[id^=cas]").addClass("bg-light");
-					//$("#cas-"+respuesta.a).removeClass("bg-light");
-					//$("#cas-"+respuesta.a).addClass("bg-success");
-					//$("#cas-"+respuesta.a).addClass("verde");
-					//$("#cas-"+respuesta.b).removeClass("bg-light");
-					//$("#cas-"+respuesta.b).addClass("bg-warning");
-					//$("#cas-"+respuesta.b).addClass("amarillo");
-					//$("#cas-"+respuesta.c).removeClass("bg-light");
-					//$("#cas-"+respuesta.c).addClass("bg-info");
-					//$("#cas-"+respuesta.c).addClass("azul");
-					//$("#cas-"+respuesta.d).removeClass("bg-light");
-					//$("#cas-"+respuesta.d).addClass("bg-danger");
-					//$("#cas-"+respuesta.d).addClass("rojo");
+						if(POSICIONES[j] == 4)
+						{
+							$("#CUARTO").append(POSICIONEStablero[j])
+						}
+					}
 				}
 			});
 		}
@@ -535,13 +636,60 @@ function jsScripts()
 	}
 	//corrobora que l puesta sea diferent
 	var checkBifecta = function() {
-		console.log('valor bifecta');
+		//console.log('valor bifecta');
 		if ((document.getElementById('apuestaCaballoBifecta').value == document.getElementById('apuestaCaballo').value))
 		{
 			alert("Primer y Segundo puesto deben ser diferentes!!!");
 			document.getElementById('apuestaCaballoBifecta').value = "0"; 
 		} 
 	}
+
+	function jugarCarta(idcarta)
+	{
+		console.log('jugar carta'+ idcarta);
+		$.ajax({
+			url: 'a/jugarCarta.php?idCarta=' + idcarta,
+			success: function(respuesta)
+			{
+				$("#decideCarta").html(respuesta);
+			}
+		});
+	}
+
+
+
+
+	<?php
+	if ($_SESSION['juegoFinalizado'])
+	{
+	?>	
+		window.setInterval(function(){
+			statusPartidaFinalizada();
+		}, 1000);
+	<?php
+	}
+	?>	
+		function statusPartidaFinalizada()
+		{
+			//console.log('mano');
+			$.ajax({
+				url: 'a/statusPartida.php',
+				success: function(respuesta)
+				{
+					//console.log(respuesta);
+					if(respuesta == 1)
+					{
+						window.location = "a/a.php?a=ver_cartas"
+					}
+				}
+			});
+		}
+
+
+
+
+
+
 
 	</script>
 	<?php

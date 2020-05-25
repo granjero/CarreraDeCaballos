@@ -76,8 +76,16 @@ if($contadorJugadores == count($_SESSION['listaJugadores']))
 	$todosLosJugadores = TRUE;
 }
 
+
+//echo "contadorJugadores -> ";
+//var_dump($contadorJugadores);
+//echo "listaJugadores -> ";
+//var_dump($_SESSION['listaJugadores']);
+//echo "sePuedeComenzar -> ";
 //var_dump($sePuedeComenzar);
-//var_dump($masDeUnJugador);
+//echo "<br>todosLosJugadores -> ";
+//var_dump($todosLosJugadores);
+
 if($sePuedeComenzar && $todosLosJugadores)
 {
 ?>

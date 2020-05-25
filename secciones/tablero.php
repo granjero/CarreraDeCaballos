@@ -170,5 +170,28 @@
 		<div class="row pt-3">
 			<div style="font-size:2em;" class="col-1 text-center border" id="cas-1000">🏆</div>
 			<div style="font-size:2em;" class="col-1 text-center border" id="cas-750">🥈</div>
+			<div style="font-size:2em;" class="col-1 text-center"></div>
+			<div style="font-size:1em;" class="col-1 text-center border my-auto">1º Puesto</div>
+			<div style="font-size:1em;" class="col-1 text-center border my-auto">2º Puesto</div>
+			<div style="font-size:1em;" class="col-1 text-center border my-auto">3º Puesto</div>
+			<div style="font-size:1em;" class="col-1 text-center border my-auto">4º Puesto</div>
+		</div>
+		<div class="row">
+			<div style="font-size:2em;" class="col-2 text-center">PODIO</div>
+			<!--<div style="font-size:2em;" class="col-1 text-center"></div>-->
+			<div style="font-size:2em;" class="col-1 text-center"></div>
+			<div style="font-size:2em;" class="col-1 text-center border" id="PRIMERO"></div>
+			<div style="font-size:2em;" class="col-1 text-center border" id="SEGUNDO"></div>
+			<div style="font-size:2em;" class="col-1 text-center border" id="TERCERO"></div>
+			<div style="font-size:2em;" class="col-1 text-center border" id="CUARTO"></div>
+		</div>
+		<div class="row">
+			<div style="font-size:2em;" class="col-1 text-center"></div>
+			<div style="font-size:2em;" class="col-1 text-center"></div>
+			<div style="font-size:2em;" class="col-1 text-center"></div>
+			<div style="font-size:2em;" class="col-1 text-center border" id="PRIMERO"></div>
+			<div style="font-size:2em;" class="col-1 text-center border" id="SEGUNDO"></div>
+			<div style="font-size:2em;" class="col-1 text-center border" id="TERCERO"></div>
+			<div style="font-size:2em;" class="col-1 text-center border" id="CUARTO"></div>
 		</div>
 	</div>

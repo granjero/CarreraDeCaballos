@@ -2,9 +2,9 @@
 <?php
 session_start();
 
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);
+//ini_set('display_errors', 1);
+//ini_set('display_startup_errors', 1);
+//error_reporting(E_ALL);
 
 $idCarta = filter_input(INPUT_GET, 'idCarta');
 $caballoSeleccionado = filter_input(INPUT_GET, 'caballo');
@@ -42,6 +42,8 @@ while ($query->fetch())
 		);
 }
 $query->close();
+
+//die(var_dump($CARTA));
 
 // LEE LA CANTIDAD DE POROTOS LOS CABALLOS Y LA GUARDA EN $CABALLOS
 // ===================================================================
@@ -119,7 +121,7 @@ elseif($CARTA['posicion'] == 1)
 {
 	if( $POSICIONES[$CARTA['caballo']] != 1 )
 	{
-		die("ERROR -> El caballo seleccionado no está en el primer puesto. VOLVER ATRÁS.");
+		die('<div class="alert alert-danger" role="alert">Carta Ilegal -> El caballo seleccionado no se encuentra en el primer puesto.</div>');
 	}
 	else
 	{
@@ -173,9 +175,14 @@ elseif($CARTA['posicion'] == 2)
 		}
 	}
 
+	//var_dump($contador2Puesto);
+	//var_dump($caballo2puesto);
+	//die();
+
 	if($contador2Puesto == 0)
 	{
-		die('ERROR -> No hay segundo puesto. VOLVER ATRÁS!');
+		die('<div class="alert alert-danger" role="alert">Carta Ilegal -> No hay animales en el segundo puesto.</div>');
+		//die('ERROR -> No hay segundo puesto. VOLVER ATRÁS!');
 	}
 	elseif($contador2Puesto > 1)
 	{
@@ -241,7 +248,8 @@ elseif($CARTA['posicion'] == 3)
 
 	if($contador3Puesto == 0)
 	{
-		die('ERROR -> No hay 3 puesto. VOLVER ATRÁS!');
+		die('<div class="alert alert-danger" role="alert">Carta Ilegal -> No hay animales en el tercer puesto.</div>');
+		//die('ERROR -> No hay 3 puesto. VOLVER ATRÁS!');
 	}
 	elseif($contador3Puesto > 1)
 	{
@@ -306,7 +314,8 @@ elseif($CARTA['posicion'] == 4)
 
 	if($contador4Puesto == 0)
 	{
-		die('ERROR -> No hay 4 puesto. VOLVER ATRÁS!');
+		die('<div class="alert alert-danger" role="alert">Carta Ilegal -> No hay animales en el cuarto puesto.</div>');
+		//die('ERROR -> No hay 4 puesto. VOLVER ATRÁS!');
 	}
 	elseif($contador4Puesto > 1)
 	{
@@ -382,7 +391,8 @@ elseif($CARTA['posicion'] == 99)
 	}
 	elseif($CARTA['caballo'] != 'x' && $POSICIONES[$CARTA['caballo']] == 1 )
 	{
-		die('ERROR -> caballo en primer puesto. VOLVLER ATRÁS.');
+		die('<div class="alert alert-danger" role="alert">Carta Ilegal -> Animal en el primer puesto.</div>');
+		//die('ERROR -> caballo en primer puesto. VOLVLER ATRÁS.');
 	}
 	else
 	{
@@ -455,6 +465,7 @@ $query->close();
 //$_SESSION['turnoActual'] = $turnoActual;
 //die(var_dump($turnoActual));
 
+//die(var_dump($CABALLOS));
 $ganador = 1000;
 foreach($CABALLOS as $llave =>$valor)
 {
@@ -479,12 +490,44 @@ foreach($CABALLOS as $llave =>$valor)
 		$query->bind_param('siiiii', $_SESSION['idCDC'],$CABALLOS['a'], $CABALLOS['b'], $CABALLOS['c'], $CABALLOS['d'], $idCarta);
 		$query->execute();
 		$query->close();
+		if($ganador == 750)
+		{
+			//header('Location: a.php?a=finalizarJuego');
+		$conn = New claseConexion();
+		$sql = NULL; //
+		$sql = $conn->Open();
+		$sql->select_db("estonoesunaweb_CDC");
+		$query = $sql->prepare('call set_partida_finalizada (?)');
+		$query->bind_param('s', $_SESSION['idCDC']);
+		$query->execute();
+		$query->close();
+		}
+	}
+
+	if ($valor >= 750)
+	{
+		$CABALLOS[$llave] = $valor >= 1000 ? 1000 : 750;
+
+		// Actualiza posiciones de los caballos
+		$conn = New claseConexion();
+		$sql = NULL; //
+		$sql = $conn->Open();
+		$sql->select_db("estonoesunaweb_CDC");
+		$query = $sql->prepare('call set_caballo_carrera(?,?,?,?,?,?)');
+		$query->bind_param('siiiii', $_SESSION['idCDC'],$CABALLOS['a'], $CABALLOS['b'], $CABALLOS['c'], $CABALLOS['d'], $idCarta);
+		$query->execute();
+		$query->close();
+		
 	}
 
 }
 
 //var_dump($proximoTurno);
-header('Location: ../');
+
+if($_GET['jugar'] == 'jugar')
+{
+	header('Location: ../');
+}
 
 ?>
 

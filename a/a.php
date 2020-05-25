@@ -252,6 +252,8 @@ switch($accion)
 
 	case 'ver_cartas':
 		$_SESSION['esperandoJugadores'] = FALSE;
+		$_SESSION['juegoIniciado'] = FALSE;
+		$_SESSION['juegoFinalizado'] = FALSE;
 		$_SESSION['esperandoApuestas'] = TRUE;
 		// Trae el saldo del jugador
 		$conn = New claseConexion();
@@ -345,6 +347,62 @@ switch($accion)
 		$_SESSION['apuestasCerradas'] = FALSE;
 		$_SESSION['juegoIniciado'] = TRUE;
 		header('Location: ../');
+		break;
+
+	case 'finalizarJuego':
+		$_SESSION['juegoIniciado'] = FALSE;
+		$_SESSION['juegoFinalizado'] = TRUE;
+		//header('Location: ../');
+		echo 'cerrada';
+		break;
+
+	case 'RESTART':
+		$_SESSION['juegoIniciado'] = FALSE;
+		$_SESSION['juegoFinalizado'] = FALSE;
+
+		// LIMPIA TABLA CARRERA
+		$conn = New claseConexion();
+		$sql = NULL; //
+		$sql = $conn->Open();
+		$sql->select_db("estonoesunaweb_CDC");
+		$query = $sql->prepare('call limpia_tb_carrera (?)');
+		$query->bind_param('s', $_SESSION['idCDC']);
+		$query->execute();
+		$query->close();
+
+
+		// LIMPIA TABLA APUESTAS 
+		$conn = New claseConexion();
+		$sql = NULL; //
+		$sql = $conn->Open();
+		$sql->select_db("estonoesunaweb_CDC");
+		$query = $sql->prepare('call limpia_tb_apuestas (?)');
+		$query->bind_param('s', $_SESSION['idCDC']);
+		$query->execute();
+		$query->close();
+
+
+		// LIMPIA TABLAS MAZO REPARTIDO
+		$conn = New claseConexion();
+		$sql = NULL; //
+		$sql = $conn->Open();
+		$sql->select_db("estonoesunaweb_CDC");
+		$query = $sql->prepare('call limpia_tb_mazo_repartido (?)');
+		$query->bind_param('s', $_SESSION['idCDC']);
+		$query->execute();
+		$query->close();
+
+		// LIMPIA TURNOS PARTIDA
+		$conn = New claseConexion();
+		$sql = NULL; //
+		$sql = $conn->Open();
+		$sql->select_db("estonoesunaweb_CDC");
+		$query = $sql->prepare('call limpia_turnos_partida(?)');
+		$query->bind_param('s', $_SESSION['idCDC']);
+		$query->execute();
+		$query->close();
+
+		header('Location: a.php?a=cierra_y_reparte');
 		break;
 
 	case 'salir':

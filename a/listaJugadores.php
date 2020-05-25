@@ -43,7 +43,7 @@ foreach($lista as $llave => $valor)
 			break;
 		}
 	?>
-		<a class="btn btn-block btn-success" href="./a/a.php?a=ver_cartas" role="button">Ver Cartas</a>
+		<a class="btn btn-block btn-success" href="./a/a.php?a=ver_cartas" role="button">Ver Suertes Recibidas</a>
 	<?php
 		break;
 	}

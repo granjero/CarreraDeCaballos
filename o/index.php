@@ -4,9 +4,9 @@ session_start();
 
 $idCarta = filter_input(INPUT_GET, 'idCarta');
 
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);
+//ini_set('display_errors', 1);
+//ini_set('display_startup_errors', 1);
+//error_reporting(E_ALL);
 
 include_once('../clases/conexion.php');
 
@@ -174,7 +174,7 @@ if ($CARTA['posicion'] == 1 || $CARTA['posicion'] == 99)
 					</div>
 				</div>
 				<div id="perfecta" class="col-3">
-				<form action="../a/jugarCarta.php" method="GET">
+				<form action="a/jugarCarta.php" method="GET">
 					<label for="apuestaCaballo">Hay <?php echo count($ELECCION); ?> animalitos que no van primeros. Seleccioná a cual va dirigida:</label>
 					<select id="apuestaCaballo" name="caballo" class="form-control form-control-lg" onchange="objetivo()">
 						<option selected value="0" disabled>Seleccionar...</option>
@@ -231,17 +231,6 @@ else
 	<?php // var_dump($_SESSION['posicionesJuego']); ?>
 
 		<div class="container-fluid py-1 px-4">
-			<div class="row align-middle bg-secondary">
-				<div class="col-11 bg-secondary text-center">
-					<!--<p class="h1">&#127937; &nbsp; &#128014; &nbsp; &#128014; &nbsp; &#128014;</p>-->
-					<p class="h1">&#127937; <?= randomAnimal(4)?></p>
-				</div>
-				<div class="col-1 bg-secondary align-self-center">
-					<a class="btn btn-outline-danger" href="a/a.php?a=salir" role="button">SALIR</a>
-				</div>
-			</div>
-		</div>
-		<div class="container-fluid py-1 px-4">
 			<div class="row">
 				<div class="col-3">
 					<div class="card" style="width: 18rem;">
@@ -259,7 +248,7 @@ else
 					</div>
 				</div>
 				<div id="perfecta" class="col-3">
-				<form action="../a/jugarCarta.php" method="GET">
+				<form action="a/jugarCarta.php" method="GET">
 					<label for="apuestaCaballo">Hay <?php echo count($ELECCION); ?> animalitos en la casilla nº <?= $CABALLOS[$ELECCION[0]] ?> en el puesto nº <?= $CARTA['posicion']; ?>. Seleccioná a cual va dirigida:</label>
 					<select id="apuestaCaballo" name="caballo" class="form-control form-control-lg" onchange="objetivo()">
 						<option selected value="0" disabled>Seleccionar...</option>
