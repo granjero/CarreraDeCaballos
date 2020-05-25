@@ -26,20 +26,36 @@ if( !isset( $_SESSION['CDC'] ) )
 	?>
 	<div class="container-fluid">
 		<form action="a/a.php" method="GET">
-			<div class="row py-2">
-				<div class="col-2">
-					<input id="nombre" type="text" placeholder="Tu Nombre..." name="nombre" onkeyup="check();">
+			<div class="row">
+				<div class="col-6">
+					<div class="row py-2">
+						<div class="col-6">
+							<input id="nombre" type="text" placeholder="Tu Nombre..." name="nombre" onkeyup="check();">
+						</div>
+						<div class="col-6">
+							<button id="boton1" type="submit" name="a" value="inicia" class="btn btn-primary" disabled>Iniciar Carrera</button>
+						</div>
+					</div>
+					<div class="row py-2">
+						<div class="col-6">
+							<input id="idCDC" type="text" placeholder="ID carrera..." name="idCDC" oninput="check();">
+						</div>
+						<div class="col-6">
+							<button id="boton2" type="submit" name="a" value="unirse" class="btn btn-primary" disabled>Unirse a una Carrera</button>
+						</div>
+					</div>
 				</div>
-				<div class="col-2">
-					<button id="boton1" type="submit" name="a" value="inicia" class="btn btn-primary" disabled>Iniciar Carrera</button>
-				</div>
-			</div>
-			<div class="row py-2">
-				<div class="col-2">
-					<input id="idCDC" type="text" placeholder="ID carrera..." name="idCDC" oninput="check();">
-				</div>
-				<div class="col-2">
-					<button id="boton2" type="submit" name="a" value="unirse" class="btn btn-primary" disabled>Unirse a una Carrera</button>
+				<div class="row">
+					<div class="col-12"> 
+						<div class="jumbotron">
+							<h1 class="display-4">Carrera de Animales</h1>
+							<p class="lead">Digitalización del mítico Carrera de Caballos, un juego de mesa transmitido oralmente por generaciones.</p>
+							<hr class="my-4">
+							<p>Ahora al alcance de toda la humanidad.</p>
+							<p class="lead">
+							</p>
+						</div>
+					</div>
 				</div>
 			</div>
 		</form>
