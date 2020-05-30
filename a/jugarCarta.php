@@ -359,6 +359,17 @@ elseif($CARTA['posicion'] == 4)
 // ===============================
 elseif($CARTA['posicion'] == 99)
 {
+
+	// controla que no haya mas de un 4 puesto
+	$contador4Puesto = 0;
+	foreach($POSICIONES as $llave => $valor)
+	{
+		if ($valor == 1)
+		{
+			$contador1Puesto++;
+		}
+	}
+
 	// para las cartas de un color en particular
 	if($CARTA['caballo'] != 'x' && $POSICIONES[$CARTA['caballo']] != 1 )
 	{	
@@ -392,6 +403,11 @@ elseif($CARTA['posicion'] == 99)
 	elseif($CARTA['caballo'] != 'x' && $POSICIONES[$CARTA['caballo']] == 1 )
 	{
 		die('<div class="alert alert-danger" role="alert">Carta Ilegal -> Animal en el primer puesto.</div>');
+		//die('ERROR -> caballo en primer puesto. VOLVLER ATRÁS.');
+	}
+	elseif($CARTA['caballo'] == 'x' && $contador1Puesto == 4)
+	{
+		die('<div class="alert alert-danger" role="alert">Carta Ilegal. Todos los animales en el primer puesto.</div>');
 		//die('ERROR -> caballo en primer puesto. VOLVLER ATRÁS.');
 	}
 	else
